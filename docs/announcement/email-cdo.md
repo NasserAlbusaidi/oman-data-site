@@ -23,10 +23,22 @@ paragraphs.
 - [ ] **Site URL is live.** At drafting time `omandata.dev` was not registered
       and not deployed. Confirm the real hostname and replace every occurrence
       here, including the signature line.
+- [ ] **The domain decision has to propagate to the site itself.** `omandata.dev`
+      is hardcoded as `site` in `astro.config.mjs` and is what the built
+      per-dataset pages print in their `curl` examples. Change it there and
+      rebuild *before* sending — this reader will run those commands.
 - [ ] **Dataset count re-verified.** The body says **9**. Re-check
       `/v1/datasets.json` for entries with `"stale": false` on the day you
       send. If a dataset has gone stale, either fix it or change the number —
       a stale catalog on the day the CDO opens the link undoes the whole point.
+- [ ] **Run the `fuel_prices` pipeline by hand the morning you send.**
+      nss.gov.om is unreachable from GitHub-hosted runners (network-level, not
+      a user-agent block), so it fails every scheduled refresh and ages into a
+      stale flag on its own. Of all nine, this is the one this reader is most
+      likely to open.
+- [ ] **`NasserAlbusaidi/oman-data` is public.** Verified PUBLIC on 2026-08-01 —
+      this box guards the regression. The email offers to show the pipeline; a
+      private repo makes the offer hollow.
 - [ ] **Signature filled.** `[phone]`, `[GitHub link]`, `[site link]` all
       replaced.
 - [ ] **The April workshop reference is right.** MTCIT's Open Data team held an
@@ -35,17 +47,30 @@ paragraphs.
       entities (verified 2026-08-01). Re-check it before sending — getting a
       recipient's own event wrong is worse than omitting it. If in doubt,
       delete that sentence; the email works without it.
+- [ ] **After sending: record it on the `## Announced` line in the site repo's
+      README** alongside the LinkedIn posts. That line is the project's
+      definition of shipped.
 
 ### Have ready if they open the data
 
-- **`fuel_prices` has mixed provenance, disclosed per row** (`source` column:
-  `archive-corroborated` 238, `subsidy-cap-freeze` 123, `archive-news-resolved`
-  12, `archive-single-source` 8, `nss.gov.om` 3). No official machine-readable
-  archive of the monthly announcements exists. This is also the single most
-  useful thing the portals could fix, if they ask what would help.
+- **`fuel_prices` has mixed provenance, disclosed per row** — the `source`
+  column, defined in `pipelines/fuel_prices/dataset.yaml`:
+  `archive-corroborated` (238 rows — at least two independent records agree),
+  `subsidy-cap-freeze` (123 — derived from the announced price cap, not observed
+  month by month), `archive-news-resolved` (12 — the compilations disagreed and
+  a dated primary record settled it), `archive-single-source` (8 — no second
+  record retrievable), `nss.gov.om` (3 — read off the official NSS page, either
+  the month currently shown or one captured by an earlier run). No official
+  machine-readable archive of the monthly announcements exists. **This is also
+  the single most useful thing the portals could fix, if they ask what would
+  help** — and the body deliberately admits it rather than waiting to be caught.
 - **`tourism` is 3–5 star hotels only**, per NCSI's published scope.
 - **`climate_normals` is ERA5 reanalysis, not DGMET observations** — labelled
   as such in the dataset's notes.
+- **data.gov.om does have an API** (Knoema, `api/1.0/data/raw`) and this
+  project's pipelines use it. The body says "developer-facing" for that reason:
+  it is keyed by opaque numeric dimension members and needs a client id. If they
+  raise it, concede immediately — they know their own portal better than we do.
 
 ---
 
@@ -62,11 +87,14 @@ I'd like to show your team: a working prototype of a developer layer on top of
 the data Oman already publishes.
 
 omandata.dev serves 9 datasets — eight from official Omani sources (NCSI, the
-National Subsidy System, the Official Gazette), plus a 1991–2020 climate
-baseline from ERA5 reanalysis that is labelled as such — as a versioned,
-bilingual, statically-hosted JSON API. Every number is traceable back to the
-official source file it came from, and freshness is flagged honestly when a
-source pauses.
+Ministry of Energy and Minerals, the National Subsidy System, Royal Oman Police
+data via NCSI, the Official Gazette), plus a 1991–2020 climate baseline from
+ERA5 reanalysis that is labelled as such — as a versioned, bilingual,
+statically-hosted JSON API. Every number carries its provenance in the data
+itself: most trace back to the official source file they came from, and where a
+value had to be reconstructed rather than published — part of the fuel-price
+history, for which no official machine-readable archive exists — the row says
+so in its own source column. Freshness is flagged honestly when a source pauses.
 
 It is deliberately a companion to the portals, not a critique: every dataset
 names its source, carries its license, and the site states plainly that it is
