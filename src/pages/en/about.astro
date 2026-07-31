@@ -1,0 +1,53 @@
+---
+import Base from "../../layouts/Base.astro";
+import { t } from "../../i18n/ui";
+---
+
+<Base locale="en" title={t("en", "nav_about")} altUrl="/about/">
+  <h1>How this works</h1>
+  <p>
+    Oman publishes real statistics — but no developer layer: no API, no bulk
+    downloads, no format guarantees. This project is that layer, built as a
+    companion to the official portals, not a replacement.
+  </p>
+  <ol>
+    <li>
+      <strong>Official sources only.</strong> Every dataset is fetched from an
+      officially published file (NCSI, ministries, regulators). Nothing is
+      scraped that wasn't published deliberately.
+    </li>
+    <li>
+      <strong>Every snapshot archived.</strong> The exact source file of every
+      fetch is committed under <code>raw/</code> — every number is traceable:
+      JSON → git commit → raw snapshot → official source URL.
+    </li>
+    <li>
+      <strong>Validation gates publication.</strong> Schema, ranges, and
+      row-count sanity are checked before anything is published. A broken
+      source never breaks published data — the last good version stays.
+    </li>
+    <li>
+      <strong>Honest freshness.</strong> A dataset past its update window is
+      flagged <code>"stale": true</code> — never silently outdated.
+    </li>
+    <li>
+      <strong>Bilingual by contract.</strong> Every dataset carries Arabic and
+      English titles; Arabic is stored unescaped. A dataset without both
+      doesn't ship.
+    </li>
+  </ol>
+  <h2>Use it</h2>
+  <pre><code>curl https://omandata.dev/v1/datasets.json</code></pre>
+  <p>
+    Static JSON, CORS open, no keys, no rate limits beyond the CDN's. Bulk
+    data as CSV/Parquet lives in the <a
+      href="https://github.com/NasserAlbusaidi/oman-data">pipeline repo</a>.
+  </p>
+  <h2>Licensing & attribution</h2>
+  <p>
+    Code is MIT. Each dataset keeps the license of its official source (Open
+    Government License – Oman for government data). This is an independent
+    project by <a href="https://github.com/NasserAlbusaidi">Nasser Albusaidi</a>,
+    not affiliated with any government entity.
+  </p>
+</Base>
