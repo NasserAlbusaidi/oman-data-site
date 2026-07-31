@@ -1,0 +1,83 @@
+---
+import { sparkline } from "../lib/sparkline";
+import type { PreviewSeries } from "../lib/preview";
+
+interface Props {
+  series: PreviewSeries;
+  locale: "ar" | "en";
+}
+
+const { series, locale } = Astro.props;
+const W = 480;
+const H = 120;
+const s = sparkline(series.points.map((p) => p.v), W, H);
+const label = locale === "ar" ? series.label_ar : series.label_en;
+const first = series.points[0]!;
+const last = series.points[series.points.length - 1]!;
+const lastValue = last.v.toLocaleString(locale === "ar" ? "ar-OM" : "en-OM");
+---
+
+<figure class="spark" dir="ltr">
+  <figcaption>{label}</figcaption>
+  <svg
+    viewBox={`0 0 ${W} ${H + 18}`}
+    role="img"
+    aria-label={`${label}: ${first.t} → ${last.t}`}
+  >
+    <line x1="0" y1={H} x2={W} y2={H} class="baseline" />
+    <path d={s.d} class="line" />
+    <circle cx={s.lastX} cy={s.lastY} r="4" class="dot" />
+    <text x="0" y={H + 14} class="tick">{first.t}</text>
+    <text x={W} y={H + 14} text-anchor="end" class="tick">{last.t}</text>
+  </svg>
+  <p class="latest">
+    <span class="dot-inline"></span>
+    {last.t}: <strong>{lastValue}</strong>
+  </p>
+</figure>
+<style>
+  .spark {
+    margin: 0;
+  }
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .line {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+  .dot {
+    fill: var(--accent);
+  }
+  .baseline {
+    stroke: var(--hairline);
+    stroke-width: 1;
+  }
+  .tick {
+    fill: var(--muted);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+  }
+  figcaption {
+    color: var(--ink-2);
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+  }
+  .latest {
+    color: var(--ink-2);
+    font-size: 0.85rem;
+    margin: 0.25rem 0 0;
+  }
+  .dot-inline {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-inline-end: 0.3rem;
+  }
+</style>

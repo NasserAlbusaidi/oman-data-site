@@ -1,0 +1,146 @@
+---
+import Base from "../../layouts/Base.astro";
+import FreshnessBadge from "../../components/FreshnessBadge.astro";
+import PreviewChart from "../../components/PreviewChart.astro";
+import { loadCatalog, loadLatest } from "../../lib/data";
+import { previewFor } from "../../lib/preview";
+import { t } from "../../i18n/ui";
+
+export function getStaticPaths() {
+  return loadCatalog().datasets.map((d) => ({ params: { id: d.id } }));
+}
+
+const { id } = Astro.params;
+const { meta, data } = loadLatest(id!);
+const locale = "ar" as const;
+const title = meta.title_ar;
+const chart = previewFor(meta.id, data);
+const tail = data.slice(-10);
+const cols = meta.columns;
+const gh = `https://github.com/NasserAlbusaidi/oman-data`;
+const raw = `https://raw.githubusercontent.com/NasserAlbusaidi/oman-data/main`;
+const cadenceKey = `cadence_${meta.cadence}` as const;
+const nf = (v: string | number) =>
+  typeof v === "number" ? v.toLocaleString("en-OM") : v;
+---
+
+<Base locale={locale} title={title} altUrl={`/en/datasets/${meta.id}/`}>
+  <p><a href="/">← {t(locale, "nav_datasets")}</a></p>
+  <div class="head">
+    <h1>{title}</h1>
+    <FreshnessBadge locale={locale} stale={meta.stale} />
+  </div>
+  {/* The separator is an expression, not literal text: a newline between two
+      expressions is stripped, so a trailing "·" would weld onto the row count. */}
+  <p class="sub">
+    {t(locale, cadenceKey)} · {t(locale, "updated")} {meta.as_of}{" · "}
+    {data.length.toLocaleString("ar-OM")} {t(locale, "rows")}
+  </p>
+
+  {chart && (
+    <section class="card">
+      <PreviewChart series={chart} locale={locale} />
+    </section>
+  )}
+
+  <section class="card">
+    <h2>{t(locale, "schema")}</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>{t(locale, "col_name")}</th>
+          <th>{t(locale, "col_dtype")}</th>
+          <th>{t(locale, "col_range")}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {cols.map((c) => (
+          <tr>
+            <td><code>{c.name}</code></td>
+            <td>{c.dtype}</td>
+            {/* The en-dash is bidi-neutral, so an RTL paragraph lays the two
+                numbers out right-to-left and "30 – 300" reads as "300 – 30".
+                An inline LTR span keeps the range in order while the cell stays
+                start-aligned with the rest of the RTL table. (A hyphen would be
+                safe — bidi class ES — but an en-dash is the correct glyph.) */}
+            <td class="num">
+              <span dir="ltr">
+                {c.min ?? ""}{c.min !== null || c.max !== null ? " – " : "—"}{c.max ?? ""}
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>{t(locale, "latest_rows")}</h2>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr>{cols.map((c) => <th><code>{c.name}</code></th>)}</tr>
+        </thead>
+        <tbody>
+          {tail.map((row) => (
+            <tr>{cols.map((c) => <td class="num">{nf(row[c.name]!)}</td>)}</tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>{t(locale, "api_use")}</h2>
+    <pre><code>curl https://omandata.dev/v1/{meta.id}/latest.json</code></pre>
+    <h2>{t(locale, "downloads")}</h2>
+    <ul>
+      <li><a href={`${raw}/data/${meta.id}/${meta.id}.csv`}>{t(locale, "dl_csv")}</a></li>
+      <li><a href={`${raw}/data/${meta.id}/${meta.id}.parquet`}>{t(locale, "dl_parquet")}</a></li>
+      <li><a href={`${gh}/tree/main/data/${meta.id}`}>{t(locale, "dl_changelog")}</a></li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>{t(locale, "source")}</h2>
+    <p><a href={meta.source_url}>{meta.source_name}</a></p>
+    <p>{t(locale, "license")}: {meta.license}</p>
+    {meta.notes && (
+      <>
+        <h2>{t(locale, "notes")}</h2>
+        <p class="notes" dir="ltr">{meta.notes}</p>
+      </>
+    )}
+  </section>
+
+  <style>
+    .head {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    h1 {
+      font-size: 1.3rem;
+      margin: 0;
+    }
+    h2 {
+      font-size: 1rem;
+      margin: 0 0 0.5rem;
+    }
+    .sub {
+      color: var(--ink-2);
+    }
+    section.card {
+      margin-block: 1rem;
+    }
+    .scroll {
+      overflow-x: auto;
+    }
+    .notes {
+      color: var(--ink-2);
+      font-size: 0.9rem;
+      text-align: left;
+    }
+  </style>
+</Base>
