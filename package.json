@@ -7,12 +7,16 @@
     "build": "astro build",
     "preview": "astro preview",
     "sync": "node scripts/sync-data.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "astro check"
   },
   "dependencies": {
     "astro": "^7.0.0"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^26.1.2",
+    "typescript": "^6.0.3",
     "vitest": "^4.0.0"
   }
 }
