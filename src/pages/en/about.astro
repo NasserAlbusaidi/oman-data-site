@@ -9,9 +9,10 @@ const catalogUrl = siteUrl("/v1/datasets.json", Astro.site);
 <Base locale="en" title={t("en", "nav_about")} altUrl="/about/">
   <h1>How this works</h1>
   <p>
-    Oman publishes real statistics — but no developer layer: no API, no bulk
-    downloads, no format guarantees. This project is that layer, built as a
-    companion to the official portals, not a replacement.
+    Oman publishes real statistics — but no developer layer: no
+    developer-facing API, no versioned bulk downloads, no format guarantees.
+    This project is that layer, built as a companion to the official portals,
+    not a replacement.
   </p>
   <ol>
     <li>
@@ -21,8 +22,11 @@ const catalogUrl = siteUrl("/v1/datasets.json", Astro.site);
     </li>
     <li>
       <strong>Every snapshot archived.</strong> The exact source file of every
-      fetch is committed under <code>raw/</code> — every number is traceable:
-      JSON → git commit → raw snapshot → official source URL.
+      fetch is committed under <code>raw/</code> — every number traces back:
+      JSON → git commit → archived snapshot. Most snapshots are an official
+      source file; where a value had to be reconstructed rather than published
+      — part of the fuel-price history, for which no official machine-readable
+      archive exists — the row's own <code>source</code> column says so.
     </li>
     <li>
       <strong>Validation gates publication.</strong> Schema, ranges, and
