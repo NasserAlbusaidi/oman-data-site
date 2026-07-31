@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.astro/
+public/v1/
+.oman-data-clone/
