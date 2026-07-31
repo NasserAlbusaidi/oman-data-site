@@ -1,15 +1,16 @@
 // Guards against the compressHTML whitespace trap: Astro's HTML compressor turns a
-// newline between text and an inline <a>/<code> into ZERO characters, so source that
-// reads fine ("lives in the\n<a ...>oman-data</a> repo") ships as "lives in the<a...".
-// See CLAUDE.md. Scans the built dist/ for a letter/digit immediately followed by an
-// inline tag, which is always a defect except after an Arabic tatweel (U+0640), the
-// kashida connector used for prefixes like "بـ" that legitimately take no space.
+// newline next to an inline <a>/<code> into ZERO characters, so source that reads fine
+// ("lives in the\n<a ...>oman-data</a>\nrepo") ships as "lives in the<a...</a>repo".
+// See CLAUDE.md. Scans the built dist/ for a letter/digit touching an inline tag on
+// either side. The one legitimate shape is an Arabic tatweel (U+0640) before an opening
+// tag — the kashida connector in prefixes like "بـ" that take no space by design.
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const DIST = process.argv[2] ?? "dist";
-const GLUED = /[\p{L}\p{N}](<(?:a|code)[ >])/gu;
+const GLUED =
+  /(?<opening>[\p{L}\p{N}])<(?:a|code)[ >]|<\/(?:a|code)>(?<closing>[\p{L}\p{N}])/gu;
 const TATWEEL = "ـ";
 
 function htmlFiles(dir) {
@@ -23,11 +24,14 @@ function htmlFiles(dir) {
 }
 
 const offences = [];
-for (const file of htmlFiles(DIST)) {
+const files = htmlFiles(DIST);
+for (const file of files) {
   const lines = readFileSync(file, "utf-8").split("\n");
   lines.forEach((line, index) => {
     for (const match of line.matchAll(GLUED)) {
-      if (line[match.index] === TATWEEL) continue;
+      // The tatweel exemption is about the opening-side shape only; a letter after a
+      // closing tag is a defect no matter which letter it is.
+      if (match.groups.opening === TATWEEL) continue;
       const context = line.slice(Math.max(0, match.index - 60), match.index + 60);
       offences.push(`${file}:${index + 1}: ...${context}...`);
     }
@@ -42,4 +46,4 @@ if (offences.length > 0) {
   process.exit(1);
 }
 
-console.log("glue guard clean");
+console.log(`glue guard clean (${files.length} files)`);

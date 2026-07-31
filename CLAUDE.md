@@ -19,14 +19,15 @@ Bilingual (AR/EN) Astro site + static JSON API host for the sibling
 - **astro 7 requires node `>=22.12`.** Pinned in three places that must stay in sync: `engines` in
   `package.json`, `.node-version` (read by Cloudflare Pages *and* by CI's `setup-node`). Pages'
   default node is older and the build fails with an engines error.
-- **Astro's `compressHTML` deletes whitespace before an inline tag entirely.** A newline between
-  text and a following `<a>`/`<code>` collapses to ZERO characters, not one space, so tidy source
-  ships as *"lives in the`<a>`oman-data`</a>` repo"*. **Keep the space and the opening tag on the
-  same source line** — never let a line break fall immediately before an inline tag. CI enforces
-  this: `npm run check:glue` (`scripts/check-html-glue.mjs`, also a step in
-  `.github/workflows/test.yml`) scans built `dist/*.html` for a letter or digit directly followed
-  by `<a`/`<code` and fails the build. The single allowed exception is a preceding Arabic tatweel
-  `ـ` (U+0640), the kashida connector in prefixes like `بـ<code>` that take no space by design.
+- **Astro's `compressHTML` deletes whitespace next to an inline tag entirely.** A newline between
+  text and an adjacent `<a>`/`<code>` collapses to ZERO characters, not one space, so tidy source
+  ships as *"lives in the`<a>`oman-data`</a>`repo"*. **Keep the space and the tag on the same
+  source line** — on both sides; a line break after `</a>` glues just as badly as one before `<a`.
+  CI enforces this: `npm run check:glue` (`scripts/check-html-glue.mjs`, also a step in
+  `.github/workflows/test.yml`) scans built `dist/*.html` for a letter or digit touching `<a`/
+  `<code` on either side and fails the build. The single allowed exception is a preceding Arabic
+  tatweel `ـ` (U+0640), the kashida connector in prefixes like `بـ<code>` that take no space by
+  design — it exempts the opening side only.
 
 ## Commands
 
