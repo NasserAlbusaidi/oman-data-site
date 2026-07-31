@@ -16,8 +16,17 @@ Bilingual (AR/EN) Astro site + static JSON API host for the sibling
 - **`src/lib/data.ts` resolves `public/v1/` from `process.cwd()`, so the build must run from the
   repo root** — `import.meta.url` does not survive Astro's prerender bundling (the module lands in
   `dist/.prerender/chunks/` and a URL-relative path resolves to `dist/public/v1`, ENOENT).
-- **astro 7 requires node `>=22.12`.** Cloudflare Pages must pin `NODE_VERSION` accordingly; its
-  default is older and the build fails with an engines error.
+- **astro 7 requires node `>=22.12`.** Pinned in three places that must stay in sync: `engines` in
+  `package.json`, `.node-version` (read by Cloudflare Pages *and* by CI's `setup-node`). Pages'
+  default node is older and the build fails with an engines error.
+- **Astro's `compressHTML` deletes whitespace before an inline tag entirely.** A newline between
+  text and a following `<a>`/`<code>` collapses to ZERO characters, not one space, so tidy source
+  ships as *"lives in the`<a>`oman-data`</a>` repo"*. **Keep the space and the opening tag on the
+  same source line** — never let a line break fall immediately before an inline tag. CI enforces
+  this: `npm run check:glue` (`scripts/check-html-glue.mjs`, also a step in
+  `.github/workflows/test.yml`) scans built `dist/*.html` for a letter or digit directly followed
+  by `<a`/`<code` and fails the build. The single allowed exception is a preceding Arabic tatweel
+  `ـ` (U+0640), the kashida connector in prefixes like `بـ<code>` that take no space by design.
 
 ## Commands
 
@@ -27,6 +36,7 @@ Bilingual (AR/EN) Astro site + static JSON API host for the sibling
 | `npm test` | vitest; `src/lib/data.test.ts` runs against the real synced tree — it is the contract check between the two repos |
 | `npm run typecheck` | `astro check` (strict tsconfig, covers `.ts` and `.astro`) |
 | `npm run build` | static build to `dist/` |
+| `npm run check:glue` | post-build guard for the compressHTML trap above (runs in CI) |
 
 ## Conventions
 
