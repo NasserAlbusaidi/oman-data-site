@@ -13,6 +13,9 @@ Bilingual (AR/EN) Astro site + static JSON API host for the sibling
   the sibling `../oman-data/api/v1` checkout, or falls back to a shallow clone of the GitHub repo if
   that checkout is absent. **The data itself lives in the oman-data repo — fix data bugs there, not
   here.** The sync fails non-zero and names the ids if any catalog dataset lacks a `latest.json`.
+- **`src/lib/data.ts` resolves `public/v1/` from `process.cwd()`, so the build must run from the
+  repo root** — `import.meta.url` does not survive Astro's prerender bundling (the module lands in
+  `dist/.prerender/chunks/` and a URL-relative path resolves to `dist/public/v1`, ENOENT).
 - **astro 7 requires node `>=22.12`.** Cloudflare Pages must pin `NODE_VERSION` accordingly; its
   default is older and the build fails with an engines error.
 
