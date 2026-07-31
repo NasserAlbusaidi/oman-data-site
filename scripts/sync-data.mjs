@@ -25,6 +25,10 @@ if (!existsSync(catalogPath)) {
   process.exit(1);
 }
 const catalog = JSON.parse(readFileSync(catalogPath, "utf-8"));
+if (!Array.isArray(catalog.datasets)) {
+  console.error(`sync failed: ${catalogPath} has no datasets array (source was ${src})`);
+  process.exit(1);
+}
 const missing = catalog.datasets
   .map((d) => d.id)
   .filter((id) => !existsSync(resolve(dest, id, "latest.json")));
