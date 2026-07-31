@@ -10,10 +10,11 @@ posting.
       domain was **not registered and not deployed** — the site had no live URL
       at all (`README.md`: "No live URL yet"). Confirm the real hostname and
       replace **every** occurrence in this file, including the link line.
-- [ ] **The domain decision has to propagate to the site itself.** `omandata.dev`
-      is hardcoded as `site` in `astro.config.mjs` and is what the built
-      per-dataset pages print in their `curl` examples. Change it there and
-      rebuild *before* posting, or the first URL a visitor copies will 404.
+- [ ] **The domain decision has to propagate to the site itself.** The hostname
+      lives in one place — `site` in `astro.config.mjs` — and the curl examples
+      and hreflang links derive from it. Change it there and rebuild *before*
+      posting, or the first URL a visitor copies will 404. Verify:
+      `grep -rn omandata.dev src dist` returns nothing after the rebuild.
 - [ ] **Dataset count re-verified.** The body says **٩**. Re-run
       `curl -s https://<site>/v1/datasets.json` and count entries with
       `"stale": false`. Nine were fresh on 2026-07-31. If fewer than 8 are
@@ -78,8 +79,8 @@ posting.
 - واجهة JSON ثابتة — ‎/v1/‎ مفتوحة للجميع دون مفاتيح
 - كل رقم يحمل مصدره داخل البيانات نفسها: من ملف JSON إلى إصداره في git إلى
   نسخة المصدر المحفوظة. ومعظم الأرقام تعود إلى ملف رسمي مباشرةً، وحيثما
-  أُعيد بناء رقم بدلًا من نشره — كجزء من تاريخ أسعار الوقود الذي لا ينشره
-  أحد بصيغة قابلة للقراءة آليًا — فالصف نفسه يصرّح بذلك.
+  أُعيد بناء رقم بدلًا من نشره — كجزء من تاريخ أسعار الوقود الذي لا يوجد له
+  أرشيف رسمي قابل للقراءة آليًا — فالصف نفسه يصرّح بذلك.
 - شفافية في تحديث البيانات: ما تجاوز نافذة تحديثه يُعلَّم "متقادمًا" ولا
   يُترك صامتًا
 - تنزيلات CSV وParquet، ومسار المعالجة بالكامل مفتوح المصدر (رخصة MIT

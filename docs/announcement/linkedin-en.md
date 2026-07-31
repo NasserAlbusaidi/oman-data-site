@@ -10,11 +10,11 @@ before posting; this is a starting point, not copy to paste blindly.
       at all (`README.md`: "No live URL yet"). Confirm the real hostname
       (custom domain or the `*.pages.dev` one) and replace **every** occurrence
       in this file, including the link line at the bottom.
-- [ ] **The domain decision has to propagate to the site itself.** `omandata.dev`
-      is hardcoded as `site` in `astro.config.mjs` and is what the built
-      per-dataset pages print in their `curl` examples. If the hostname changes,
-      change it there and rebuild *before* posting — otherwise the first thing a
-      visitor copies is a URL that 404s.
+- [ ] **The domain decision has to propagate to the site itself.** The hostname
+      lives in one place — `site` in `astro.config.mjs` — and the curl examples
+      and hreflang links derive from it. Change it there and rebuild *before*
+      posting, otherwise the first thing a visitor copies is a URL that 404s.
+      Verify: `grep -rn omandata.dev src dist` returns nothing after the rebuild.
 - [ ] **Dataset count re-verified.** The body says **9**. Re-run
       `curl -s https://<site>/v1/datasets.json` and count entries with
       `"stale": false`. Nine were fresh on 2026-07-31. If fewer than 8 are
@@ -85,8 +85,8 @@ that layer on top of the official sources:
 - Every number carries its provenance in the data: JSON → git commit →
   archived source snapshot. Most trace straight to an official source file, and
   where a number had to be reconstructed rather than published — part of the
-  fuel-price history, which nobody publishes machine-readably — the row says so
-  itself.
+  fuel-price history, for which no official machine-readable archive exists —
+  the row says so itself.
 - Honest freshness: anything past its update window is flagged stale, never
   silently outdated
 - CSV + Parquet downloads, full pipeline open source (MIT for the code; each

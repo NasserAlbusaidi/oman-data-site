@@ -23,10 +23,11 @@ paragraphs.
 - [ ] **Site URL is live.** At drafting time `omandata.dev` was not registered
       and not deployed. Confirm the real hostname and replace every occurrence
       here, including the signature line.
-- [ ] **The domain decision has to propagate to the site itself.** `omandata.dev`
-      is hardcoded as `site` in `astro.config.mjs` and is what the built
-      per-dataset pages print in their `curl` examples. Change it there and
-      rebuild *before* sending — this reader will run those commands.
+- [ ] **The domain decision has to propagate to the site itself.** The hostname
+      lives in one place — `site` in `astro.config.mjs` — and the curl examples
+      and hreflang links derive from it. Change it there and rebuild *before*
+      sending; this reader will run those commands. Verify:
+      `grep -rn omandata.dev src dist` returns nothing after the rebuild.
 - [ ] **Dataset count re-verified.** The body says **9**. Re-check
       `/v1/datasets.json` for entries with `"stale": false` on the day you
       send. If a dataset has gone stale, either fix it or change the number —
