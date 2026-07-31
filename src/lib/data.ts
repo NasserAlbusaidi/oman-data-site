@@ -43,10 +43,47 @@ export interface Latest {
 // root for both `astro build` and vitest.
 const V1 = join(process.cwd(), "public", "v1");
 
+const CADENCES = ["static", "monthly", "annual"] as const;
+
+/**
+ * The published JSON is a build input from another repo, so it is a boundary,
+ * not internal code. A wrong cadence silently renders `undefined` as the
+ * cadence label, and a non-boolean `stale` makes the freshness badge lie —
+ * both would ship green through Cloudflare Pages, which reports only the exit
+ * code. Failing the build with the offending id is the loud alternative.
+ */
+function assertEntry(entry: CatalogEntry, where: string): void {
+  const id = entry?.id ?? "<missing id>";
+  if (!CADENCES.includes(entry?.cadence)) {
+    throw new Error(
+      `${where}: dataset "${id}" has cadence ${JSON.stringify(entry?.cadence)}, expected one of ${CADENCES.join(", ")}`,
+    );
+  }
+  if (typeof entry?.stale !== "boolean") {
+    throw new Error(
+      `${where}: dataset "${id}" has stale ${JSON.stringify(entry?.stale)}, expected a boolean`,
+    );
+  }
+}
+
 export function loadCatalog(): Catalog {
-  return JSON.parse(readFileSync(join(V1, "datasets.json"), "utf-8"));
+  const catalog: Catalog = JSON.parse(
+    readFileSync(join(V1, "datasets.json"), "utf-8"),
+  );
+  for (const entry of catalog.datasets) assertEntry(entry, "datasets.json");
+  return catalog;
 }
 
 export function loadLatest(id: string): Latest {
-  return JSON.parse(readFileSync(join(V1, id, "latest.json"), "utf-8"));
+  const latest: Latest = JSON.parse(
+    readFileSync(join(V1, id, "latest.json"), "utf-8"),
+  );
+  const where = `${id}/latest.json`;
+  assertEntry(latest.meta, where);
+  if (!Array.isArray(latest.meta?.columns) || latest.meta.columns.length === 0) {
+    throw new Error(
+      `${where}: dataset "${id}" has no columns — the schema table and the row table would render empty`,
+    );
+  }
+  return latest;
 }

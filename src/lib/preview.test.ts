@@ -1,5 +1,35 @@
 import { expect, test } from "vitest";
+import { loadLatest } from "./data";
 import { previewFor } from "./preview";
+
+// Every extractor keys off column names and filter values owned by the other
+// repo (`group === "general"`, `flow === "exports"`, `fuel_type === "m91"`…).
+// A rename there does not fail any fixture test — it just silently degrades
+// the page to table-only. This runs the extractors against the real synced
+// tree, which is the only place that drift shows up.
+const CHARTABLE = [
+  "cpi",
+  "population",
+  "trade",
+  "tourism",
+  "electricity",
+  "traffic_accidents",
+  "fuel_prices",
+  "climate_normals",
+];
+
+test.each(CHARTABLE)("%s charts from the real synced data", (id) => {
+  const series = previewFor(id, loadLatest(id).data);
+  expect(series, `${id} lost its preview — check the extractor's column names`)
+    .not.toBeNull();
+  expect(series!.points.length).toBeGreaterThanOrEqual(2);
+  expect(series!.points.every((p) => Number.isFinite(p.v))).toBe(true);
+});
+
+test("admin_geography is the reference dataset with no chart", () => {
+  expect(previewFor("admin_geography", loadLatest("admin_geography").data))
+    .toBeNull();
+});
 
 test("cpi extracts the general series in month order", () => {
   const rows = [
