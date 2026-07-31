@@ -1,0 +1,81 @@
+---
+import { dirFor, t, type Locale } from "../i18n/ui";
+import "../styles/global.css";
+
+interface Props {
+  locale: Locale;
+  title: string;
+  altUrl: string;
+}
+
+const { locale, title, altUrl } = Astro.props;
+const dir = dirFor(locale);
+const home = locale === "ar" ? "/" : "/en/";
+const about = locale === "ar" ? "/about/" : "/en/about/";
+const altLocale = locale === "ar" ? "en" : "ar";
+const altHref = new URL(altUrl, Astro.site ?? "https://omandata.dev").pathname;
+---
+
+<!doctype html>
+<html lang={locale} dir={dir}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — {t(locale, "site_title")}</title>
+    <meta name="description" content={t(locale, "tagline")} />
+    <link rel="alternate" hreflang={altLocale} href={altHref} />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href={home} class="brand">{t(locale, "site_title")}</a>
+        <span class="links">
+          <a href={home}>{t(locale, "nav_datasets")}</a>
+          <a href={about}>{t(locale, "nav_about")}</a>
+          <a href={altUrl}>{t(locale, "lang_switch")}</a>
+        </span>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>{t(locale, "footer_disclaimer")}</p>
+      <p>
+        <a href="https://github.com/NasserAlbusaidi/oman-data">{t(locale, "footer_github")}</a>
+      </p>
+    </footer>
+    <style>
+      header {
+        background: var(--surface);
+        border-bottom: 1px solid var(--hairline);
+      }
+      nav {
+        max-width: 60rem;
+        margin: 0 auto;
+        padding: 0.75rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+      }
+      .brand {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .links {
+        display: flex;
+        gap: 1rem;
+      }
+      footer {
+        border-top: 1px solid var(--hairline);
+        color: var(--muted);
+        font-size: 0.85rem;
+        text-align: center;
+        padding: 1.5rem 1rem;
+      }
+    </style>
+  </body>
+</html>
