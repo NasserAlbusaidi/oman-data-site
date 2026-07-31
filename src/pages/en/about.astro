@@ -1,6 +1,9 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { siteUrl } from "../../lib/site";
 import { t } from "../../i18n/ui";
+
+const catalogUrl = siteUrl("/v1/datasets.json", Astro.site);
 ---
 
 <Base locale="en" title={t("en", "nav_about")} altUrl="/about/">
@@ -37,7 +40,7 @@ import { t } from "../../i18n/ui";
     </li>
   </ol>
   <h2>Use it</h2>
-  <pre><code>curl https://omandata.dev/v1/datasets.json</code></pre>
+  <pre><code>curl {catalogUrl}</code></pre>
   <p>
     Static JSON, CORS open, no keys, no rate limits beyond the CDN's. Bulk
     data as CSV/Parquet lives in the <a

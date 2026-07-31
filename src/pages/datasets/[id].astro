@@ -4,6 +4,7 @@ import FreshnessBadge from "../../components/FreshnessBadge.astro";
 import PreviewChart from "../../components/PreviewChart.astro";
 import { loadCatalog, loadLatest } from "../../lib/data";
 import { previewFor } from "../../lib/preview";
+import { siteUrl } from "../../lib/site";
 import { t } from "../../i18n/ui";
 
 export function getStaticPaths() {
@@ -20,6 +21,7 @@ const cols = meta.columns;
 const gh = `https://github.com/NasserAlbusaidi/oman-data`;
 const raw = `https://raw.githubusercontent.com/NasserAlbusaidi/oman-data/main`;
 const cadenceKey = `cadence_${meta.cadence}` as const;
+const apiUrl = siteUrl(`/v1/${meta.id}/latest.json`, Astro.site);
 const nf = (v: string | number) =>
   typeof v === "number" ? v.toLocaleString("en-OM") : v;
 ---
@@ -92,7 +94,7 @@ const nf = (v: string | number) =>
 
   <section class="card">
     <h2>{t(locale, "api_use")}</h2>
-    <pre><code>curl https://omandata.dev/v1/{meta.id}/latest.json</code></pre>
+    <pre><code>curl {apiUrl}</code></pre>
     <h2>{t(locale, "downloads")}</h2>
     <ul>
       <li><a href={`${raw}/data/${meta.id}/${meta.id}.csv`}>{t(locale, "dl_csv")}</a></li>

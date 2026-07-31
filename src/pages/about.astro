@@ -1,6 +1,9 @@
 ---
 import Base from "../layouts/Base.astro";
+import { siteUrl } from "../lib/site";
 import { t } from "../i18n/ui";
+
+const catalogUrl = siteUrl("/v1/datasets.json", Astro.site);
 ---
 
 <Base locale="ar" title={t("ar", "nav_about")} altUrl="/en/about/">
@@ -36,7 +39,7 @@ import { t } from "../i18n/ui";
     </li>
   </ol>
   <h2>استخدمه</h2>
-  <pre><code>curl https://omandata.dev/v1/datasets.json</code></pre>
+  <pre><code>curl {catalogUrl}</code></pre>
   <p>
     JSON ثابت، CORS مفتوح، بلا مفاتيح ولا حدود استخدام سوى حدود شبكة التوزيع.
     البيانات الكاملة بصيغتي CSV وParquet في <a

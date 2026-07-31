@@ -1,5 +1,6 @@
 ---
 import { dirFor, t, type Locale } from "../i18n/ui";
+import { siteUrl } from "../lib/site";
 import "../styles/global.css";
 
 interface Props {
@@ -13,7 +14,12 @@ const dir = dirFor(locale);
 const home = locale === "ar" ? "/" : "/en/";
 const about = locale === "ar" ? "/about/" : "/en/about/";
 const altLocale = locale === "ar" ? "en" : "ar";
-const altHref = new URL(altUrl, Astro.site ?? "https://omandata.dev").pathname;
+// hreflang must be absolute — a pathname is ignored by crawlers. The host comes
+// from `site` in astro.config.mjs, never from a literal here.
+const altHref = siteUrl(altUrl, Astro.site);
+// x-default belongs to the same cluster as the alternates, so it is this page's
+// Arabic twin (which on the home page is the Arabic root), not the site root.
+const defaultHref = siteUrl(locale === "ar" ? Astro.url.pathname : altUrl, Astro.site);
 ---
 
 <!doctype html>
@@ -24,6 +30,7 @@ const altHref = new URL(altUrl, Astro.site ?? "https://omandata.dev").pathname;
     <title>{title} — {t(locale, "site_title")}</title>
     <meta name="description" content={t(locale, "tagline")} />
     <link rel="alternate" hreflang={altLocale} href={altHref} />
+    <link rel="alternate" hreflang="x-default" href={defaultHref} />
   </head>
   <body>
     <header>
