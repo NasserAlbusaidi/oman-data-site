@@ -1,0 +1,37 @@
+---
+import { t, type Locale } from "../i18n/ui";
+
+interface Props {
+  locale: Locale;
+  stale: boolean;
+}
+
+const { locale, stale } = Astro.props;
+---
+
+<span class:list={["badge", stale ? "stale" : "fresh"]}>
+  <span class="icon" aria-hidden="true">{stale ? "⚠" : "✓"}</span>
+  {t(locale, stale ? "stale" : "fresh")}
+</span>
+<style>
+  /* Status is carried by icon + text; colour is never the sole signal and never
+     lands on the label itself (light-mode --warn on --surface is 1.8:1). */
+  .badge {
+    display: inline-flex;
+    gap: 0.3rem;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--hairline);
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .fresh .icon {
+    color: var(--good);
+  }
+  .stale .icon {
+    color: var(--warn);
+  }
+</style>

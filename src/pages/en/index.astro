@@ -1,0 +1,26 @@
+---
+import Base from "../../layouts/Base.astro";
+import DatasetCard from "../../components/DatasetCard.astro";
+import { loadCatalog } from "../../lib/data";
+import { t } from "../../i18n/ui";
+
+const catalog = loadCatalog();
+---
+
+<Base locale="en" title={t("en", "nav_datasets")} altUrl="/">
+  <h1>{t("en", "tagline")}</h1>
+  <div class="grid">
+    {catalog.datasets.map((entry) => <DatasetCard locale="en" entry={entry} />)}
+  </div>
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    h1 {
+      font-size: 1.4rem;
+    }
+  </style>
+</Base>

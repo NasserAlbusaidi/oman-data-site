@@ -1,0 +1,64 @@
+---
+import type { CatalogEntry } from "../lib/data";
+import { t, type Locale } from "../i18n/ui";
+import FreshnessBadge from "./FreshnessBadge.astro";
+
+interface Props {
+  locale: Locale;
+  entry: CatalogEntry;
+}
+
+const { locale, entry } = Astro.props;
+const title = locale === "ar" ? entry.title_ar : entry.title_en;
+const href =
+  locale === "ar" ? `/datasets/${entry.id}/` : `/en/datasets/${entry.id}/`;
+const cadenceKey = `cadence_${entry.cadence}` as const;
+---
+
+<a class="card dataset" href={href}>
+  <div class="top">
+    <h2>{title}</h2>
+    <FreshnessBadge locale={locale} stale={entry.stale} />
+  </div>
+  <p class="meta">
+    <span>{t(locale, cadenceKey)}</span>
+    <span>{t(locale, "updated")} {entry.as_of}</span>
+    {/* number and label must stay on one line: a newline between expressions is
+        stripped, and the AR "صفًا" is a counted form that must follow the number */}
+    <span>{entry.rows.toLocaleString(locale === "ar" ? "ar-OM" : "en-OM")} {t(locale, "rows")}</span>
+  </p>
+  <p class="source">{entry.source_name}</p>
+</a>
+<style>
+  .dataset {
+    display: block;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .dataset:hover {
+    border-color: var(--accent);
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    align-items: start;
+  }
+  h2 {
+    font-size: 1.05rem;
+    margin: 0;
+  }
+  .meta {
+    display: flex;
+    gap: 1rem;
+    color: var(--ink-2);
+    font-size: 0.85rem;
+    margin: 0.5rem 0 0.25rem;
+    flex-wrap: wrap;
+  }
+  .source {
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin: 0;
+  }
+</style>

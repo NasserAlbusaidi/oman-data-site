@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 export interface CatalogEntry {
   id: string;
@@ -36,12 +37,16 @@ export interface Latest {
   data: Record<string, string | number>[];
 }
 
-const V1 = new URL("../../public/v1/", import.meta.url);
+// Anchored to the project root, not to import.meta.url: Astro bundles this module
+// into dist/.prerender/chunks/ for the prerender pass, so a URL-relative path
+// resolves to dist/public/v1 and the build dies with ENOENT. cwd is the project
+// root for both `astro build` and vitest.
+const V1 = join(process.cwd(), "public", "v1");
 
 export function loadCatalog(): Catalog {
-  return JSON.parse(readFileSync(new URL("datasets.json", V1), "utf-8"));
+  return JSON.parse(readFileSync(join(V1, "datasets.json"), "utf-8"));
 }
 
 export function loadLatest(id: string): Latest {
-  return JSON.parse(readFileSync(new URL(`${id}/latest.json`, V1), "utf-8"));
+  return JSON.parse(readFileSync(join(V1, id, "latest.json"), "utf-8"));
 }
