@@ -18,7 +18,9 @@ const en = {
   schema: "Schema",
   col_name: "Column",
   col_dtype: "Type",
-  col_range: "Range",
+  // The API publishes schema validation bounds, not observed min/max — labelling
+  // these "Range" told readers Oman's population was "1 – 5,000,000".
+  col_range: "Valid range",
   preview: "Preview",
   latest_rows: "Latest rows",
   source: "Official source",
@@ -51,7 +53,7 @@ const ar: Record<keyof typeof en, string> = {
   schema: "بنية الجدول",
   col_name: "العمود",
   col_dtype: "النوع",
-  col_range: "المدى",
+  col_range: "المدى المقبول",
   preview: "معاينة",
   latest_rows: "أحدث الصفوف",
   source: "المصدر الرسمي",

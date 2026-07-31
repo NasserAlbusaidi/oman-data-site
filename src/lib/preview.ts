@@ -6,6 +6,16 @@ export interface PreviewSeries {
 
 type Row = Record<string, string | number>;
 
+/**
+ * Number() at the boundary, but blank-ish input is missing data, not zero:
+ * Number(null) and Number("") are both 0, which would chart a hole as a real
+ * reading. Everything non-finite is dropped by the callers below.
+ */
+function num(v: unknown): number {
+  if (v === null || v === undefined || v === "") return NaN;
+  return Number(v);
+}
+
 function series(
   rows: Row[],
   tKey: string,
@@ -14,7 +24,10 @@ function series(
   label_en: string,
 ): PreviewSeries | null {
   const points = rows
-    .map((r) => ({ t: String(r[tKey]), v: Number(r[vKey]) }))
+    .map((r) => ({ t: String(r[tKey]), v: num(r[vKey]) }))
+    // Drop before the length check: a NaN would reach the SVG as "M5.0 NaN"
+    // and blank the whole path. Too few real points means table-only.
+    .filter((p) => Number.isFinite(p.v))
     .sort((a, b) => a.t.localeCompare(b.t));
   return points.length >= 2 ? { label_ar, label_en, points } : null;
 }
@@ -23,7 +36,9 @@ function sumBy(rows: Row[], tKey: string, vKey: string): Row[] {
   const totals = new Map<string, number>();
   for (const r of rows) {
     const k = String(r[tKey]);
-    totals.set(k, (totals.get(k) ?? 0) + Number(r[vKey]));
+    // NaN propagates through +, so one missing member poisons its whole group
+    // and series() drops it. A partial sum would be a confidently wrong total.
+    totals.set(k, (totals.get(k) ?? 0) + num(r[vKey]));
   }
   return [...totals].map(([t, v]) => ({ [tKey]: t, [vKey]: v }));
 }
@@ -55,6 +70,8 @@ const EXTRACTORS: Record<string, (rows: Row[]) => PreviewSeries | null> = {
     ),
   trade: (rows) =>
     series(
+      // exports already includes re_exports upstream, so the flows must never
+      // be summed or stacked — that would double-count the re-exported goods.
       rows.filter((r) => r.flow === "exports"),
       "month",
       "value_omr_mn",
@@ -89,7 +106,8 @@ const EXTRACTORS: Record<string, (rows: Row[]) => PreviewSeries | null> = {
     // month is an int 1–12: sort numerically, not lexicographically
     const points = rows
       .filter((r) => r.station === "muscat" && r.variable === "tmax_c")
-      .map((r) => ({ t: String(r.month), v: Number(r.value) }))
+      .map((r) => ({ t: String(r.month), v: num(r.value) }))
+      .filter((p) => Number.isFinite(p.v))
       .sort((a, b) => Number(a.t) - Number(b.t));
     return points.length >= 2
       ? {

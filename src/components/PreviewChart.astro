@@ -17,19 +17,31 @@ const last = series.points[series.points.length - 1]!;
 const lastValue = last.v.toLocaleString(locale === "ar" ? "ar-OM" : "en-OM");
 ---
 
-<figure class="spark" dir="ltr">
+<figure class="spark">
   <figcaption>{label}</figcaption>
-  <svg
-    viewBox={`0 0 ${W} ${H + 18}`}
-    role="img"
-    aria-label={`${label}: ${first.t} → ${last.t}`}
-  >
-    <line x1="0" y1={H} x2={W} y2={H} class="baseline" />
-    <path d={s.d} class="line" />
-    <circle cx={s.lastX} cy={s.lastY} r="4" class="dot" />
-    <text x="0" y={H + 14} class="tick">{first.t}</text>
-    <text x={W} y={H + 14} text-anchor="end" class="tick">{last.t}</text>
-  </svg>
+  {/* Only the plot is forced LTR — a time axis reads left→right in both
+      locales. The caption and the latest-value line follow the page direction
+      so they stay aligned with everything else on the Arabic page. */}
+  <div class="plot" dir="ltr">
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      role="img"
+      aria-label={`${label}: ${first.t} → ${last.t}`}
+    >
+      {/* Half a unit up so the 1px stroke fits inside the viewBox instead of
+          being clipped along its centre line. */}
+      <line x1="0" y1={H - 0.5} x2={W} y2={H - 0.5} class="baseline" />
+      <path d={s.d} class="line" />
+      <circle cx={s.lastX} cy={s.lastY} r="4" class="dot" />
+    </svg>
+    {/* Ticks live in HTML, not in the SVG: the chart scales to its container,
+        so an 11px SVG label renders at ~6px on a 360px screen. */}
+    <p class="ticks"><span>{first.t}</span><span>{last.t}</span></p>
+  </div>
+  {/* No dir="ltr" wrap needed here, unlike the schema range cell: "-" is bidi
+      class ES, which W4 folds into the surrounding digits, so "2026-05" stays
+      intact, and the colon resolves between the two number runs. Verified
+      identical geometry with and without a wrap. */}
   <p class="latest">
     <span class="dot-inline"></span>
     {last.t}: <strong>{lastValue}</strong>
@@ -57,10 +69,13 @@ const lastValue = last.v.toLocaleString(locale === "ar" ? "ar-OM" : "en-OM");
     stroke: var(--hairline);
     stroke-width: 1;
   }
-  .tick {
-    fill: var(--muted);
-    font-size: 11px;
+  .ticks {
+    display: flex;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 0.75rem;
     font-variant-numeric: tabular-nums;
+    margin: 0.15rem 0 0;
   }
   figcaption {
     color: var(--ink-2);
