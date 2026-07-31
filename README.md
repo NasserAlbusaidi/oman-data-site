@@ -50,9 +50,28 @@ hand, once):
 
 The sync step has no sibling checkout on Pages, so it shallow-clones
 oman-data at build time; that means **a data change in oman-data needs a
-rebuild here to go live.** oman-data's refresh workflow calls a Pages deploy
-hook (Settings → Builds & deployments → Deploy hooks) to trigger one — store
-the hook URL as a secret in oman-data, never in this repo.
+rebuild here to go live.** oman-data's refresh workflows call a Pages deploy
+hook (Settings → Builds & deployments → Deploy hooks) to trigger one. Store
+that hook URL as the repository secret **`CF_PAGES_DEPLOY_HOOK` in the
+oman-data repo** — that exact name is what `refresh-monthly.yml` and
+`refresh-annual.yml` read; never put it in this repo. If the secret is
+absent the refresh logs a skip, and if the hook call fails it logs a warning
+rather than failing the data refresh.
+
+The hostname the site prints in its `curl` examples and hreflang links comes
+from `site` in `astro.config.mjs` — change the domain there and rebuild;
+there is nothing else to edit.
+
+Verify after a deploy (replace the host with the live one):
+
+```sh
+curl -s https://<host>/v1/datasets.json | head -c 200
+curl -sI https://<host>/v1/datasets.json | grep -i access-control-allow-origin
+```
+
+The first must return the catalog JSON; the second must show
+`access-control-allow-origin: *` — without it the API is unusable from a
+browser, which is most of the point.
 
 No live URL yet: it will be the generated `*.pages.dev` domain until the
 custom domain is decided.

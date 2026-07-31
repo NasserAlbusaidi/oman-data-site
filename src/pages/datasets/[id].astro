@@ -27,7 +27,8 @@ const nf = (v: string | number) =>
 ---
 
 <Base locale={locale} title={title} altUrl={`/en/datasets/${meta.id}/`}>
-  <p><a href="/">← {t(locale, "nav_datasets")}</a></p>
+  {/* RTL: "back" points right. */}
+  <p><a href="/">→ {t(locale, "nav_datasets")}</a></p>
   <div class="head">
     <h1>{title}</h1>
     <FreshnessBadge locale={locale} stale={meta.stale} />

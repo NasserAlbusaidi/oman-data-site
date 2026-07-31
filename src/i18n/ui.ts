@@ -8,7 +8,6 @@ const en = {
   nav_about: "How it works",
   lang_switch: "العربية",
   updated: "Data through",
-  fetched: "Last fetched",
   fresh: "Fresh",
   stale: "Stale",
   cadence_static: "Reference",
@@ -21,7 +20,6 @@ const en = {
   // The API publishes schema validation bounds, not observed min/max — labelling
   // these "Range" told readers Oman's population was "1 – 5,000,000".
   col_range: "Valid range",
-  preview: "Preview",
   latest_rows: "Latest rows",
   source: "Official source",
   license: "Data license",
@@ -43,7 +41,6 @@ const ar: Record<keyof typeof en, string> = {
   nav_about: "كيف يعمل",
   lang_switch: "English",
   updated: "البيانات حتى",
-  fetched: "آخر جلب",
   fresh: "محدَّث",
   stale: "متقادم",
   cadence_static: "مرجعي",
@@ -54,7 +51,6 @@ const ar: Record<keyof typeof en, string> = {
   col_name: "العمود",
   col_dtype: "النوع",
   col_range: "المدى المقبول",
-  preview: "معاينة",
   latest_rows: "أحدث الصفوف",
   source: "المصدر الرسمي",
   license: "رخصة البيانات",
