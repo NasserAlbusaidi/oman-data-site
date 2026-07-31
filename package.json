@@ -2,13 +2,17 @@
   "name": "oman-data-site",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "sync": "node scripts/sync-data.mjs",
     "test": "vitest run",
-    "typecheck": "astro check"
+    "typecheck": "astro check",
+    "check:glue": "node scripts/check-html-glue.mjs"
   },
   "dependencies": {
     "astro": "^7.0.0"

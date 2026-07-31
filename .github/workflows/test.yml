@@ -1,0 +1,25 @@
+name: test
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+      - run: npm ci
+      # public/v1/ is gitignored, and both the tests and the build read it from disk,
+      # so the sync has to come first. OMAN_DATA_DIR is pointed at nothing on purpose:
+      # it forces the shallow-clone fallback, which is the path Cloudflare Pages uses.
+      - run: node scripts/sync-data.mjs
+        env:
+          OMAN_DATA_DIR: /nonexistent
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Guard against compressHTML glue defects
+        run: npm run check:glue
