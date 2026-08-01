@@ -38,8 +38,16 @@ same code path Cloudflare Pages does.
 
 ## Deploy
 
-Cloudflare Pages, built from this repo's `main`. Dashboard setup (done by
-hand, once):
+**Live now at <https://oman-data-site.pages.dev>** — a wrangler direct-upload
+deploy (`npm run sync && npm run build && npx wrangler pages deploy dist
+--project-name oman-data-site --branch main`). Direct-upload projects have no
+git builds and therefore no deploy hooks, so redeploys are manual until the
+project is switched to git-connected builds.
+
+The target setup is Cloudflare Pages built from this repo's `main`. A
+direct-upload project cannot be converted: delete `oman-data-site` in the
+dashboard first, then recreate it git-connected **with the same project name**
+(the `pages.dev` URL survives). Dashboard setup (done by hand, once):
 
 | setting | value |
 | --- | --- |
@@ -73,5 +81,8 @@ The first must return the catalog JSON; the second must show
 `access-control-allow-origin: *` — without it the API is unusable from a
 browser, which is most of the point.
 
-No live URL yet: it will be the generated `*.pages.dev` domain until the
-custom domain is decided.
+The live URL stays `oman-data-site.pages.dev` until the custom domain is
+decided; note `astro.config.mjs` currently sets `site` to
+`https://omandata.dev`, so canonical/hreflang URLs and the printed `curl`
+examples point at the target domain, not the `pages.dev` host. Flip that one
+line before announcing if the announcement will link to `pages.dev`.
