@@ -7,7 +7,7 @@ test("catalog loads and has bilingual entries", () => {
   for (const d of catalog.datasets) {
     expect(d.title_ar.length).toBeGreaterThan(0);
     expect(d.title_en.length).toBeGreaterThan(0);
-    expect(["static", "monthly", "annual"]).toContain(d.cadence);
+    expect(["static", "monthly", "quarterly", "annual"]).toContain(d.cadence);
   }
 });
 

@@ -6,7 +6,7 @@ export interface CatalogEntry {
   title_ar: string;
   title_en: string;
   source_name: string;
-  cadence: "static" | "monthly" | "annual";
+  cadence: "static" | "monthly" | "quarterly" | "annual";
   as_of: string;
   fetched_at: string;
   stale: boolean;
@@ -43,7 +43,7 @@ export interface Latest {
 // root for both `astro build` and vitest.
 const V1 = join(process.cwd(), "public", "v1");
 
-const CADENCES = ["static", "monthly", "annual"] as const;
+const CADENCES = ["static", "monthly", "quarterly", "annual"] as const;
 
 /**
  * The published JSON is a build input from another repo, so it is a boundary,
