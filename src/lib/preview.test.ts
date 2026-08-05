@@ -16,6 +16,9 @@ const CHARTABLE = [
   "traffic_accidents",
   "fuel_prices",
   "climate_normals",
+  "gdp",
+  "oil_gas",
+  "ppi",
 ];
 
 test.each(CHARTABLE)("%s charts from the real synced data", (id) => {
@@ -138,6 +141,68 @@ test("electricity charts production_gwh by year, not consumption", () => {
     { t: "2024", v: 48000 },
     { t: "2025", v: 50973.5 },
   ]);
+});
+
+// Current and constant prices measure the same aggregate two different ways;
+// one axis carrying both would draw a fictional series, and only the current
+// basis reaches the newest year at all.
+test("gdp charts current prices only, never mixing the two bases", () => {
+  const rows = [
+    { year: 2023, price_basis: "constant", gdp_mn_omr: 37674.5 },
+    { year: 2023, price_basis: "current", gdp_mn_omr: 39432.1 },
+    { year: 2024, price_basis: "current", gdp_mn_omr: 41194.3 },
+  ];
+  const s = previewFor("gdp", rows);
+  expect(s?.points).toEqual([
+    { t: "2023", v: 39432.1 },
+    { t: "2024", v: 41194.3 },
+  ]);
+  expect(s?.label_en).toContain("current");
+});
+
+// The four columns span 82 to 1.9e6; only one may be picked, and it must be
+// the production series the labels name.
+test("oil_gas charts crude production, not price or gas", () => {
+  const rows = [
+    {
+      year: 2022,
+      crude_production_kbbl_day: 1063.8,
+      crude_exports_kbbl_day: 872.4,
+      crude_price_usd_bbl: 94.6,
+      gas_production_mn_scf: 1841000,
+    },
+    {
+      year: 2023,
+      crude_production_kbbl_day: 1048.7,
+      crude_exports_kbbl_day: 850.2,
+      crude_price_usd_bbl: 82.3,
+      gas_production_mn_scf: 1908026.7,
+    },
+  ];
+  const s = previewFor("oil_gas", rows);
+  expect(s?.points).toEqual([
+    { t: "2022", v: 1063.8 },
+    { t: "2023", v: 1048.7 },
+  ]);
+  expect(s?.label_en).toContain("Crude oil production");
+});
+
+// Quarter labels are strings, not dates. They sort chronologically under plain
+// string comparison — including across a year boundary, which is the case that
+// would break if anyone "fixed" this by parsing them.
+test("ppi keeps the general non-oil group and sorts quarters chronologically", () => {
+  const rows = [
+    { quarter: "2019Q1", group: "general_nonoil", index: 99.1 },
+    { quarter: "2018Q4", group: "general_nonoil", index: 98.4 },
+    { quarter: "2018Q4", group: "manufacturing", index: 101.7 },
+    { quarter: "2019Q1", group: "water", index: 97.2 },
+  ];
+  const s = previewFor("ppi", rows);
+  expect(s?.points).toEqual([
+    { t: "2018Q4", v: 98.4 },
+    { t: "2019Q1", v: 99.1 },
+  ]);
+  expect(s?.label_en).toContain("non-oil");
 });
 
 // A NaN would reach the SVG path as "M5.0 NaN" and blank the chart silently.

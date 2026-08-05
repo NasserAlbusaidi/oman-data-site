@@ -52,6 +52,17 @@ const EXTRACTORS: Record<string, (rows: Row[]) => PreviewSeries | null> = {
       "الرقم القياسي العام (2018=100)",
       "CPI, general (2018=100)",
     ),
+  ppi: (rows) =>
+    series(
+      rows.filter((r) => r.group === "general_nonoil"),
+      // Quarter labels ("2018Q1") are not Date-parseable, but they do sort
+      // chronologically as plain strings, so series()' localeCompare is already
+      // correct — nothing here should try to parse them into dates.
+      "quarter",
+      "index",
+      "الرقم القياسي العام لأسعار المنتجين — غير النفطي (2018=100)",
+      "PPI, general non-oil (2018=100)",
+    ),
   population: (rows) =>
     series(
       sumBy(rows, "year", "population"),
@@ -93,6 +104,27 @@ const EXTRACTORS: Record<string, (rows: Row[]) => PreviewSeries | null> = {
       "production_gwh",
       "إنتاج الكهرباء (جيجاواط·ساعة)",
       "Electricity production (GWh)",
+    ),
+  gdp: (rows) =>
+    series(
+      // Current prices only. Current and constant are two different measures of
+      // the same aggregate, so charting both as one series would be nonsense —
+      // and only current prices carry the headline 2024 figure.
+      rows.filter((r) => r.price_basis === "current"),
+      "year",
+      "gdp_mn_omr",
+      "الناتج المحلي الإجمالي بالأسعار الجارية (مليون ر.ع)",
+      "GDP at market prices, current (OMR mn)",
+    ),
+  oil_gas: (rows) =>
+    series(
+      // One column, deliberately: the four measures span 82 (USD/bbl) to 1.9e6
+      // (MNSCF), so a shared axis pins three of them flat on the baseline.
+      rows,
+      "year",
+      "crude_production_kbbl_day",
+      "متوسط الإنتاج اليومي من النفط الخام (ألف برميل/يوم)",
+      "Crude oil production (thousand bbl/day)",
     ),
   traffic_accidents: (rows) =>
     series(
