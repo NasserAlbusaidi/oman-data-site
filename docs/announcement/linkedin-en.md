@@ -15,10 +15,10 @@ before posting; this is a starting point, not copy to paste blindly.
       and hreflang links derive from it. Change it there and rebuild *before*
       posting, otherwise the first thing a visitor copies is a URL that 404s.
       Verify: `grep -rn omandata.dev src dist` returns nothing after the rebuild.
-- [ ] **Dataset count re-verified.** The body says **9**. Re-run
+- [ ] **Dataset count re-verified.** The body says **12**. Re-run
       `curl -s https://<site>/v1/datasets.json` and count entries with
-      `"stale": false`. Nine were fresh on 2026-07-31. If fewer than 8 are
-      fresh, **do not post** — fix the pipeline first.
+      `"stale": false`. All twelve were fresh on 2026-08-05. If fewer than 11
+      are fresh, **do not post** — fix the pipeline first.
 - [ ] **Run the `fuel_prices` pipeline by hand the morning of the post.**
       nss.gov.om is unreachable from GitHub-hosted runners (network-level block;
       it answers fine from a Muscat connection), so this dataset fails every
@@ -30,7 +30,7 @@ before posting; this is a starting point, not copy to paste blindly.
       the post's closing line into a 404.
 - [ ] **Links filled.** Both `[link: …]` placeholders replaced with real URLs.
       A post with a placeholder in it is the whole first impression, wasted.
-- [ ] **The source-mix line still matches reality.** 8 of the 9 datasets come
+- [ ] **The source-mix line still matches reality.** 11 of the 12 datasets come
       from official Omani sources; `climate_normals` is ERA5 reanalysis (via
       Open-Meteo), not an official Omani observation series. If the catalog
       changes, change the sentence.
@@ -71,15 +71,15 @@ before posting; this is a starting point, not copy to paste blindly.
 For the past few weeks I've been building the developer layer Oman's open
 data doesn't have yet: omandata.dev
 
-Oman publishes real statistics — population, prices, trade, tourism, fuel,
-electricity, road safety — but as files, not as infrastructure. No
-developer-facing API, no versioned bulk snapshots. So I built the prototype of
-that layer on top of the official sources:
+Oman publishes real statistics — population, consumer and producer prices, GDP,
+trade, tourism, fuel, electricity, oil and gas, road safety — but as files, not
+as infrastructure. No developer-facing API, no versioned bulk snapshots. So I
+built the prototype of that layer on top of the official sources:
 
-- 9 datasets, normalized into tidy bilingual (AR/EN) tables. Eight come from
+- 12 datasets, normalized into tidy bilingual (AR/EN) tables. Eleven come from
   official Omani sources (NCSI, the Ministry of Energy and Minerals, the
   National Subsidy System, Royal Oman Police data via NCSI, the Official
-  Gazette); the ninth is a 1991–2020 climate baseline computed from ERA5
+  Gazette); the twelfth is a 1991–2020 climate baseline computed from ERA5
   reanalysis, and it is labelled as exactly that.
 - A static JSON API — /v1/, CORS open, no keys
 - Every number carries its provenance in the data: JSON → git commit →

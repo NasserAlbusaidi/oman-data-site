@@ -61,10 +61,10 @@ oman-data at build time; that means **a data change in oman-data needs a
 rebuild here to go live.** oman-data's refresh workflows call a Pages deploy
 hook (Settings → Builds & deployments → Deploy hooks) to trigger one. Store
 that hook URL as the repository secret **`CF_PAGES_DEPLOY_HOOK` in the
-oman-data repo** — that exact name is what `refresh-monthly.yml` and
-`refresh-annual.yml` read; never put it in this repo. If the secret is
-absent the refresh logs a skip, and if the hook call fails it logs a warning
-rather than failing the data refresh.
+oman-data repo** — that exact name is what `refresh-monthly.yml`,
+`refresh-quarterly.yml` and `refresh-annual.yml` read; never put it in this
+repo. If the secret is absent the refresh logs a skip, and if the hook call
+fails it logs a warning rather than failing the data refresh.
 
 The hostname the site prints in its `curl` examples and hreflang links comes
 from `site` in `astro.config.mjs` — change the domain there and rebuild;

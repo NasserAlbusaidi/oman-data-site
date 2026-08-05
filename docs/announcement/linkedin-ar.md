@@ -15,10 +15,10 @@ posting.
       and hreflang links derive from it. Change it there and rebuild *before*
       posting, or the first URL a visitor copies will 404. Verify:
       `grep -rn omandata.dev src dist` returns nothing after the rebuild.
-- [ ] **Dataset count re-verified.** The body says **٩**. Re-run
+- [ ] **Dataset count re-verified.** The body says **١٢**. Re-run
       `curl -s https://<site>/v1/datasets.json` and count entries with
-      `"stale": false`. Nine were fresh on 2026-07-31. If fewer than 8 are
-      fresh, **do not post**.
+      `"stale": false`. All twelve were fresh on 2026-08-05. If fewer than 11
+      are fresh, **do not post**.
 - [ ] **Run the `fuel_prices` pipeline by hand the morning of the post.**
       nss.gov.om is unreachable from GitHub-hosted runners, so it fails every
       scheduled refresh and will silently age into a stale flag — on the dataset
@@ -27,7 +27,7 @@ posting.
       this box guards the regression. A private repo makes the closing line
       (المستودع مفتوح) a lie and a 404.
 - [ ] **Links filled.** Both `[رابط …]` placeholders replaced with real URLs.
-- [ ] **The source-mix sentence still matches reality.** 8 of the 9 are from
+- [ ] **The source-mix sentence still matches reality.** 11 of the 12 are from
       official Omani sources; `climate_normals` is ERA5 reanalysis, and the
       Arabic body says so. Keep it that way.
 - [ ] **RTL check before posting.** Paste into the LinkedIn composer and look
@@ -66,15 +66,16 @@ posting.
 خلال الأسابيع الماضية كنت أبني طبقة برمجية للمطوّرين تفتقدها البيانات
 المفتوحة في عُمان: omandata.dev
 
-عُمان تنشر إحصاءات حقيقية — السكان، والأسعار، والتجارة، والسياحة، والوقود،
-والكهرباء، وحوادث المرور — لكن كملفات، لا كبنية تحتية: لا واجهة برمجية موجّهة
+عُمان تنشر إحصاءات حقيقية — السكان، وأسعار المستهلكين والمنتجين، والناتج
+المحلي الإجمالي، والتجارة، والسياحة، والوقود، والكهرباء، والنفط والغاز،
+وحوادث المرور — لكن كملفات، لا كبنية تحتية: لا واجهة برمجية موجّهة
 للمطوّرين، ولا لقطات شاملة محفوظة بإصدارات. فبنيت نموذجًا أوليًا لتلك الطبقة
 فوق المصادر الرسمية نفسها:
 
-- ٩ مجموعات بيانات منظمة في جداول ثنائية اللغة (عربي/إنجليزي). ثمانٍ منها من
-  مصادر رسمية عُمانية (المركز الوطني للإحصاء والمعلومات، ووزارة الطاقة
+- ١٢ مجموعة بيانات منظمة في جداول ثنائية اللغة (عربي/إنجليزي). إحدى عشرة منها
+  من مصادر رسمية عُمانية (المركز الوطني للإحصاء والمعلومات، ووزارة الطاقة
   والمعادن، ونظام الدعم الوطني، وبيانات شرطة عُمان السلطانية عبر المركز
-  الوطني، والجريدة الرسمية)، والتاسعة معدلات مناخية ١٩٩١–٢٠٢٠ محسوبة من
+  الوطني، والجريدة الرسمية)، والثانية عشرة معدلات مناخية ١٩٩١–٢٠٢٠ محسوبة من
   بيانات إعادة التحليل ERA5 — وهي موسومة بذلك صراحةً.
 - واجهة JSON ثابتة — ‎/v1/‎ مفتوحة للجميع دون مفاتيح
 - كل رقم يحمل مصدره داخل البيانات نفسها: من ملف JSON إلى إصداره في git إلى

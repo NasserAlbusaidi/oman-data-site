@@ -28,14 +28,14 @@ paragraphs.
       and hreflang links derive from it. Change it there and rebuild *before*
       sending; this reader will run those commands. Verify:
       `grep -rn omandata.dev src dist` returns nothing after the rebuild.
-- [ ] **Dataset count re-verified.** The body says **9**. Re-check
+- [ ] **Dataset count re-verified.** The body says **12**. Re-check
       `/v1/datasets.json` for entries with `"stale": false` on the day you
       send. If a dataset has gone stale, either fix it or change the number —
       a stale catalog on the day the CDO opens the link undoes the whole point.
 - [ ] **Run the `fuel_prices` pipeline by hand the morning you send.**
       nss.gov.om is unreachable from GitHub-hosted runners (network-level, not
       a user-agent block), so it fails every scheduled refresh and ages into a
-      stale flag on its own. Of all nine, this is the one this reader is most
+      stale flag on its own. Of all twelve, this is the one this reader is most
       likely to open.
 - [ ] **`NasserAlbusaidi/oman-data` is public.** Verified PUBLIC on 2026-08-01 —
       this box guards the regression. The email offers to show the pipeline; a
@@ -87,7 +87,7 @@ the Open Government Data Policy and the national portal, and I built something
 I'd like to show your team: a working prototype of a developer layer on top of
 the data Oman already publishes.
 
-omandata.dev serves 9 datasets — eight from official Omani sources (NCSI, the
+omandata.dev serves 12 datasets — eleven from official Omani sources (NCSI, the
 Ministry of Energy and Minerals, the National Subsidy System, Royal Oman Police
 data via NCSI, the Official Gazette), plus a 1991–2020 climate baseline from
 ERA5 reanalysis that is labelled as such — as a versioned, bilingual,
