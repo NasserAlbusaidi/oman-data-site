@@ -5,11 +5,11 @@ before posting; this is a starting point, not copy to paste blindly.
 
 ## Pre-post checklist (EXECUTION gate)
 
-- [ ] **Site URL is live.** The body says `omandata.dev`. At drafting time that
-      domain was **not registered and not deployed** — the site had no live URL
-      at all (`README.md`: "No live URL yet"). Confirm the real hostname
-      (custom domain or the `*.pages.dev` one) and replace **every** occurrence
-      in this file, including the link line at the bottom.
+- [ ] **Site URL is live.** The body says `omandata.dev`. At drafting time
+      `omandata.dev` was not registered; the site is now live at
+      `oman-data-site.pages.dev` (direct upload). Confirm which hostname the
+      post will use — the custom domain or the `*.pages.dev` one — and replace
+      **every** occurrence in this file, including the link line at the bottom.
 - [ ] **The domain decision has to propagate to the site itself.** The hostname
       lives in one place — `site` in `astro.config.mjs` — and the curl examples
       and hreflang links derive from it. Change it there and rebuild *before*

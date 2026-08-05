@@ -20,8 +20,9 @@ paragraphs.
       - **NCSI** — the national statistics mandate (Royal Decree 40/2014), and
         the source behind most of the catalog. Worth a **separate** email in
         its own words, not a CC — the ask is different.
-- [ ] **Site URL is live.** At drafting time `omandata.dev` was not registered
-      and not deployed. Confirm the real hostname and replace every occurrence
+- [ ] **Site URL is live.** At drafting time `omandata.dev` was not registered;
+      the site is now live at `oman-data-site.pages.dev` (direct upload).
+      Confirm which hostname the email will use and replace every occurrence
       here, including the signature line.
 - [ ] **The domain decision has to propagate to the site itself.** The hostname
       lives in one place — `site` in `astro.config.mjs` — and the curl examples
